@@ -17,7 +17,7 @@ from PIL import Image
 
 ### page setup
 st.set_page_config(
-    page_title="ROI Planning Calculator",
+    page_title="Acquisition Scenario Planner",
     page_icon='dropbox.ico',
     layout="centered")
 
