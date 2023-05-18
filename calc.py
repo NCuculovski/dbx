@@ -38,7 +38,7 @@ hide_menu_style = """
 st.markdown(hide_menu_style, unsafe_allow_html=True)
 
 ## import image
-#image = Image.open('2560px-Dropbox_logo_2017.svg.png')
+image = Image.open('2560px-Dropbox_logo_2017.svg.png')
 ## write image
 col1, col2, col3 = st.columns([2.5,5,1])
 with col1:
