@@ -72,7 +72,7 @@ st.markdown('Industry anticipated exponential decay applied to subsequent years.
 
 personal_plus_retention_y1 = st.slider('First Year Retention Rate (%):', min_value=0.0, max_value=100.0, value=95.0, step=0.1, help='First year retention rate for personal products.')
 personal_lifetime = st.slider('Average Lifetime (#):', min_value=1, max_value=10, value=3, step=1, help='Average lifetime for personal products.')
-personal_theta_slider = st.slider('Decay Rate (Θ):', min_value=1, max_value=10, value=1, step=1, help='Average decay for personal products.')
+personal_theta_slider = st.slider('Decay Rate (Θ):', min_value=1, max_value=10, value=4, step=1, help='Average decay for personal products.')
 
 I = 1
 a = 2
