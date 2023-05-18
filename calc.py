@@ -18,7 +18,6 @@ from PIL import Image
 ### page setup
 st.set_page_config(
     page_title="ROI Planning Calculator",
-    page_icon='dropbox.ico',
     layout="centered")
 
 hide_menu_style = """
