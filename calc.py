@@ -17,7 +17,7 @@ from PIL import Image
 
 ### page setup
 st.set_page_config(
-    page_title="Acquisition Scenario Planner",
+    page_title="ROI Planning Calculator",
     page_icon='dropbox.ico',
     layout="centered")
 
@@ -114,3 +114,69 @@ col3.metric("Growth (4:1)", "$"+str(industry_growth.round(2)))
 col4.metric("Hyper Growth (5:1)", "$"+str(industry_hyper.round(2)))
 
 st.success("Given historical and user quality trends, the optimal acquisition cost is between " + "\$"+str(industry_hyper.round(2)) + " and " + "\$"+str(industry_average.round(2)) + ".")
+
+#---------------------------------#
+
+st.text("")
+st.text("")
+st.subheader("**Business - Retention & Lifespan**")
+
+business_professional, business_standard, business_advanced = st.columns(3)
+with business_professional:
+    business_professional_pricing = st.number_input("Professional ($): ", min_value=0.0, value=198.96, help='Pricing for Business Professional package - yearly subscription for 5 users.')
+with business_standard:
+    business_standard_pricing = st.number_input("Standard ($): ", min_value=0.0, value=750.00, help='Pricing for Business Standard package - yearly subscription for 5 users.')
+with business_advanced:
+    business_advanced_pricing = st.number_input("Advanced ($): ", min_value=0.0, value=1200.00, help='Pricing for Business Advanced package - yearly subscription for 5 users.')
+
+business_professional_people, business_standard_people, business_advanced_people = st.columns(3)
+with business_professional_people:
+   business_professional_population = st.number_input("Professional (#): ", min_value=0, value=1500000, step = 1000, help='Number of Personal Plus package users.')
+with business_standard_people:
+   business_standard_population = st.number_input("Standard (#): ", min_value=0, value=500000, step = 1000, help='Number of Personal Family package users.')
+with business_advanced_people:
+   business_advanced_population = st.number_input("Advanced (#): ", min_value=0, value=100000, step = 1000, help='Number of Personal Family package users.')
+
+business_professional_total = business_professional_pricing * business_professional_population
+business_standard_total = business_standard_pricing * business_standard_population
+business_advanced_total = business_advanced_pricing * business_advanced_population
+business_total = business_professional_total + business_standard_total + business_advanced_total
+
+st.subheader("**Business - Retention Year 1**")
+st.markdown('Industry anticipated exponential decay applied to subsequent years.')
+
+business_retention_y1 = st.slider('First Year Retention Rate (%):', min_value=0.0, max_value=100.0, value=85.0, step=0.1, help='First year retention rate for business products.')
+business_lifetime = st.slider('Average Lifetime (#):', min_value=1, max_value=10, value=5, step=1, help='Average lifetime for business products.')
+business_theta_slider = st.slider('Decay Rate (Θ):', min_value=1, max_value=10, value=2, step=1, help='Average decay for business products.')
+
+I = 1
+a = 2
+T = business_lifetime
+dt = 1
+Nt = int(round(T/dt))                                    # no of time intervals
+u = np.zeros(Nt+1)                                       # array of u[n] values
+t = np.linspace(0, T, Nt+1)                              # time mesh                  # Backward Euler method
+business_theta_transform = business_retention_y1 / 10
+theta = business_theta_transform / business_theta_slider
+
+u[0] = I                     # assign initial condition
+for n in range(0, Nt):       # n=0,1,...,Nt-1
+    u[n+1] = (1 - (1-theta)*a*dt)/(1 + theta*dt*a)*u[n]
+st.line_chart(u)
+
+business_decay = pd.DataFrame(u, columns=['Decay'])
+
+business_industry_average = (((business_decay*business_total).sum()[0])/(business_professional_population+business_standard_population+business_advanced_population))/3
+business_industry_growth = (((business_decay*business_total).sum()[0])/(business_professional_population+business_standard_population+business_advanced_population))/4
+business_industry_hyper = (((business_decay*business_total).sum()[0])/(business_professional_population+business_standard_population+business_advanced_population))/5
+
+st.subheader("**Business - Acquisition Cost Targets (LTV:CAC)**")
+col1, col2, col3, col4 = st.columns(4)
+col1.metric("Lifetime Value (LTV)", "$"+str(((business_decay*business_total).sum()[0]/1000000000).round(2))+'B')
+col2.metric("Industry Average (3:1)", "$"+str(business_industry_average.round(2)))
+col3.metric("Growth (4:1)", "$"+str(business_industry_growth.round(2)))
+col4.metric("Hyper Growth (5:1)", "$"+str(business_industry_hyper.round(2)))
+
+st.success("Given historical and user quality trends, the optimal acquisition cost is between " + "\$"+str(business_industry_hyper.round(2)) + " and " + "\$"+str(business_industry_average.round(2)) + ".")
+
+#---------------------------------#
