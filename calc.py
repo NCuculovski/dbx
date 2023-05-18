@@ -37,17 +37,6 @@ hide_menu_style = """
 
 st.markdown(hide_menu_style, unsafe_allow_html=True)
 
-## import image
-#image = Image.open('2560px-Dropbox_logo_2017.svg.png')
-## write image
-col1, col2, col3 = st.columns([2.5,5,1])
-with col1:
-    st.write("")
-with col2:
-    st.image(image, width=300, use_column_width=None)
-with col3:
-    st.write("")
-
 hide_full_screen = '''
 <style>
     .css-6awftf.e19lei0e1 {visibility: hidden;}
